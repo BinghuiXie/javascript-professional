@@ -14,5 +14,7 @@ JavaScript简介
 [freecodeCamp：JavaScript 与 ECMAScript 的区别](https://www.freecodecamp.org/news/whats-the-difference-between-javascript-and-ecmascript-cba48c73a2b5/)    
 [StackOverflow： What is the difference between JavaScript and ECMAScript?](https://stackoverflow.com/questions/912479/what-is-the-difference-between-javascript-and-ecmascript)
 
-### DOM 
+### DOM BOM
 后面章节有详细介绍
+
+###
