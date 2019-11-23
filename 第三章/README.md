@@ -111,7 +111,7 @@ JS 中的 Number 类型
         - 参数是 undefined，返回 NaN
         - 参数是字符串
             - 空字符串：返回 0
-            - 只含有数字的字符串(包括十进制、十六进制和八进制、整数，浮点数)： 八进制忽略前导 0 返回剩下的，十进制原封不动的返回，十六进制返回对应的十进制数字
+            - 只含有数字的字符串(包括十进制、十六进制、整数，浮点数)：十进制原封不动的返回，十六进制返回对应的十进制数字，**如果前面有 0 ，则忽略前面的 0 ，返回后面的数字，也就是说，不会转八进制**
             - 含有其他字符的字符串： 返回 NaN
         - 参数是对象
             先调用对象的 `valueOf` 方法，根据 `valueOf` 返回的值按照上面的规则来转，如果转换的结果是 NaN，则调用对象的 `toString()` 方法，然后再次依照前面的规则转换返回的字符串值。  
@@ -120,6 +120,7 @@ JS 中的 Number 类型
     console.log(Number("123a")); // NaN
     console.log(Number("10")); // 10
     console.log(Number("00000123")); // 123
+    console.log(Number("0123")); // 123
     console.log(Number("0xA")); // 10 ( 16进制 A 对应 10进制的 10 )
     console.log(Number("")); // 0
     console.log(Number(null)); // 0
@@ -127,6 +128,7 @@ JS 中的 Number 类型
     console.log(Number({})); // NaN
     console.log(Number({valueOf: function(){return 1234}})); // 1234
     ```
+    
     **注： 一元操作符 + 也可以起到和 Number() 函数一样的作用，例如  +"12"  ==>  12， 换句话说，Number(param) <==> +param**     
     
     2. parseInt(param)     
@@ -135,23 +137,25 @@ JS 中的 Number 类型
         - 忽略字符串前面的空格
         - 如果字符串首字符不是数字，返回 NaN
         - 如果是数字，会向后查找，知道遇到一个不是数字的(包括小数点)，返回期间的数字并忽略后面的内容
-        - 十六进制转为其对应的十进制，八进制忽略前面的 0 ，返回对应的十进制(注意八进制的数字范围在 0 - 7 ，如果超出 7 ，那么就会原封不动返回 0 后面的)
+        - 十六进制转为其对应的十进制
+        - 在 ES5 的引擎中，parseInt 不在具有解析八进制的字符串的能力，会直接忽略前面的 0 ，返回后面的数字
             ```javascript
             console.log(parseInt("1234abc")); // 1234 (忽略后面的 abc )
             console.log(parseInt("")); // NaN
             console.log(parseInt("59.3")); // 59
             // 转八进制
-            console.log(parseInt("0123")); // 83
-            console.log(parseInt("0487")); // 487 ( 8 > 7 )
+            console.log(parseInt("0123")); // 123
+            console.log(parseInt("0487")); // 487 
             console.log(parseInt("00000000123")); // 123
             ```
-        parseInt 还支持第二个参数，表示按照多少进制解析该字符串，默认是按照十进制转字符串
+        parseInt 还支持第二个参数，表示按照多少进制解析该字符串，默认是按照十进制转字符串，第二个参数在解析八进制的时候会起到作用，不加第二个参数不会解析八进制数字
         ```javascript
         // 可以省略 0
         console.log(parseInt("0123", 8));  // 83
         console.log(parseInt("123", 8)); // 83
         // 默认按照十进制解析
         console.log(parseInt("123")); // 123
+        console.log(parseInt("0123")); // 123
         
         // 可以省略 0x
         console.log(parseInt("0x123", 16)); // 291
