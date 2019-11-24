@@ -67,8 +67,9 @@ console.log(!undefined); // true
 ```
 上面的代码中， if 里面的 message 被自动转换成为了 true，所以会弹出 message is true。    
 
-JS 中的 Number 类型
 <hr />
+
+**JS 中的 Number 类型**
 
 1. js 中的数值进制   
     1. 十进制
@@ -173,6 +174,66 @@ JS 中的 Number 类型
         console.log(parseFloat("12.23.34")); // 12.23
         console.log(parseFloat("0xA")); // 0 
         ```
-        
-JS 中的 String 类型
 <hr />
+
+**JS 中的 String 类型**
+
+1. ECMAScript 中的字符串的特点: **不可变**。**字符串一旦创建，他们的值就不能再被改变，要改变某个变量保存的字符串，首先要销毁原来的字符串，然后再用另一个包含新值的字符串填充该变量**
+    ```javascript
+    let str = "Java";
+    str = "Script";
+    console.log(str); // Script
+    // 不能像数组一样改变字符串中的某一位置的值
+    str[1] = "B";
+    console.log(str); // Script
+    ```
+    这个例子中，首先创建一个长度为 6 的新字符串，然后在其中填充 Script，然后删除原来的 Java 字符串。
+    
+2. 字符串的转换
+    - toString() 方法     
+        除了 null 和 undefined ，剩下所有类型都有一个 toString 方法
+        ```javascript
+        console.log(Number.prototype.toString);     // ƒ toString() { [native code] }
+        console.log(Object.prototype.toString);     // ƒ toString() { [native code] }
+        console.log(String.prototype.toString);     // ƒ toString() { [native code] }
+        console.log(Boolean.prototype.toString);    // ƒ toString() { [native code] }
+        ```
+        在转换数值类型的时候，toString 接收一个参数，表示将该数值转换为几进制对应的字符串：
+        ```javascript
+        const num = 10;
+        console.log(num.toString(16)); // "a"
+        console.log(num.toString(8)); // "12"
+        console.log(num.toString(2)); // "1010"
+        ```
+        **注意上面没有直接写 `10.toString()` 这样会报错，因为数字后面的 "." 会被解析为小数点而不是方法的调用。要想直接用数字的话，可以这么写： **
+        ```javascript
+        console.log(10..toString(2)); // "1010"
+        ```
+        这样可以是因为第一个**点**被解析为小数点，和前面的数字连起来被解析为 10，第二个 **点** 被解析为方法的调用，所以可以出结果
+    - 转型函数 String(param)
+        - 如果被转换的值有 `toString()` 方法，就调用这个方法
+        - 如果是 null， 就返回 "null"
+        - 如果是 undefined，就返回 "undefined"
+
+<hr />
+
+**JS 中的 Object 类型**
+
+- Object 的每一个实例都具有以下方法:
+    - toString()
+    - valueOf()
+    - constructor()
+    - hasOwnProperty(propertyName): 检查对象有没有传入的属性
+    - isPrototypeOf(object)
+    - toLocalString()
+    - propertyIsEnumerable(propertyName)
+    
+后面的章节有详细的 Object 对象的笔记。
+
+<hr />
+
+### 操作符
+
+**一元操作符**    
+
+
