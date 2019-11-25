@@ -50,6 +50,7 @@ JS 的几种数据类型都可以转为 Boolean 类型，可以手动转换，�
 2. null ==> false
 3. "" ==> false
 4. 0 ==> false
+5. NaN ==> false
 
 剩下的所有任何类型的值转完都是 true    
 手动转换可以通过 `Boolean` 函数进行转换，如：
@@ -342,7 +343,73 @@ const user = userData || {}
 
 <hr />
 
-**乘性操作符**
+**相等操作符**
 
+- 相等和不相等( **==** && **!=** ): 两个操作符都会先转换操作数（通常称为强制转型），然后再比较它们的相等性
+    - 一个操作数是布尔值，则先将其转换为数值(false 转换为 0， true 转换为 1)
+    - 一个操作数是字符串，一个是数值，则将字符串转为数值再比较
+    - 一个操作数是对象，另一个不是，则调用对象的 `valueOf()` 方法，将其返回值与另一个操作数比较
+    - 两个操作数都是对象，则比较他们是不是同一个对象，如果指向同一个对象，返回 true
+    - null 和 undefined 是相等的 ( null == undefined )
+    - 任何值和 NaN 比较返回的都是 false，包括它自己，任何值和 NaN 比较不等( != )返回的都是 true， 包括 NaN 自己
+    - 要比较相等性之前，不能将 null 和 undefined 转换成其他任何值
+        ```javascript
+        console.log(null == 0); // false
+        console.log(null == undefined); // true
+        console.log(undefined == 0); // false
+        ```
+- 全等和不全等( **===** && **!==** ): **比较的时候不转换操作数**，也就是说，如果两个操作数的类型不一样，也会返回 false
 
+<hr />
 
+**逗号操作符**    
+逗号操作符除了可以在一条语句中执行多个操作以外，还可以用于赋值：
+```javascript
+const num = (5, 1, 0, 6); // num 的值为 6 
+```
+在用于赋值时，逗号操作符总会返回表达式中的最后一项。
+
+### 语句
+
+**for-in语句**
+
+作用：枚举对象的属性
+```javascript
+const propArr = [];
+for (let propname in window){
+  propArr.push(propname);
+}
+console.log(propArr);
+```
+**注意：如果被循环的对象是 undefined 或者 null， 就不会执行循环体，所以在用 for-in 循环的时候，最好先判断一下对象是不是 null 或者 undefined。**
+
+<hr />
+
+**switch-case语句**
+
+ECMAScript 中的 switch 语句中可以使用任何类型，而不是像 C 语言一样只能使用数字：
+```javascript
+// 假设是 redux 环境
+switch(action.type) {
+  case  "CONSTANT_NUM":
+    // do something
+    break
+  default: 
+    // default things...
+}
+```
+**switch里面的case在比较值的时候使用的是全等(===)，所以不会发生类型转换。**
+
+<hr />
+
+### 函数
+
+函数内部有一个 arguments 对象会接受所有传进来的参数，可以通过下标访问到传入的参数，也可以通过 length 属性查看传入的参数的数量，但 arguments 不是一个数组的实例，它没有数组原型上的方法，只是一个类数组的对象。    
+arguments对象中的值会自动反映到对应的命名参数，所以修改 arguments 中对应的项，就会返回到对应的参数上，始终保持二者的值是一致的:
+```javascript
+// 一旦执行了 arguments[1] = 10;  以后，num2 的值也会变为 10 
+function doAdd(num1, num2) { 
+ arguments[1] = 10; 
+ alert(arguments[0] + num2); 
+}
+```
