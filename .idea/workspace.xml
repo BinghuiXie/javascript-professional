@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="bbec496d-e548-4dad-8187-1b4989ab0919" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/第四章/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/第三章/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/第三章/README.md" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -29,7 +29,7 @@
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="F:/BLOG/source/_posts/JavaScript参数传递-按值还是按引用.md" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -64,7 +64,8 @@
       <workItem from="1574333927437" duration="3549000" />
       <workItem from="1574409591263" duration="8513000" />
       <workItem from="1574494171911" duration="7376000" />
-      <workItem from="1574565224538" duration="16226000" />
+      <workItem from="1574565224538" duration="20187000" />
+      <workItem from="1574748071862" duration="13154000" />
     </task>
     <servers />
   </component>
