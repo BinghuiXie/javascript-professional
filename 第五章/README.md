@@ -141,17 +141,18 @@ function compare(value1, value2){
 
 **操作数组的方法**
 
-1. concat()
-2. splice()
-3. indexOf()
-4. lastIndexOf()
-5. every()
-6. filter()
-7. forEach()
-8. map()
-9. some()
-10. reduce()
-11. reduceRight()
+1. `concat()`
+2. `splice()`
+3. `splice()`
+4. `indexOf()`
+5. `lastIndexOf()`
+6. `every()`
+7. `filter()`
+8. `forEach()`
+9. `map()`
+10. `some()`
+11. `reduce()`
+12. `reduceRight()`
 
 **1. concat()**
 
@@ -162,4 +163,102 @@ let arr7 = arr6.concat(3, [4, 5], "15", { num: 1 }, undefined, [{name: 1}, {age:
 console.log(arr7); //  [1, 2, 3, 4, 5, "15", {…}, undefined, {…}, {…}]
 ```
 
+<hr />
+
 **2. slice()**
+
+用法：截取数组，该方法会返回一个新的数组，不会影响原数组。   
+首先，在什么都不传的情况下，返回的新数组与原数组一样，`slice()` 函数最多可以接受两个参数，分别表示截取的开始位置和结束位置(传入参数对应数组下标)，但是截取出来的数组不会包括结束位置的项，`slice()` 会截取开始位置到结束位置减一的所有项放到系数组中，
+如果传入的参数有负数，就把该负数加上数组的长度再来确定位置，如果结束位置小于等于开始位置，返回空数组：
+```javascript
+const arr3 = [1,2,3,4,5,6,7,8,9,10];
+console.log(arr3.slice(2));         // [3, 4, 5, 6, 7, 8, 9, 10]
+console.log(arr3.slice(2, 10));     // [3, 4, 5, 6, 7, 8, 9, 10]
+console.log(arr3.slice(-4, -1));    // [7, 8, 9] 等价于 arr3.slice(6, 9)
+console.log(arr3.slice(4, 2));      // []
+```
+
+<hr />
+
+**3.splice()**
+
+`splice()` 可以对数组进行删除，插入和替换的操作，同时会修改原数组。
+**删除：** 可以删除任意数量的项，只需指定 2 个参数：要删除的第一项的位置和要删除的项数，会以数组的形式返回删除的项。   
+**插入：** 可以向指定位置插入任意数量的项，只需提供 3 个参数：起始位置、0（要删除的项数）和要插入的项。如果要插入多个项，可以再传入第四、第五，以至任意多个项。    
+**替换：** 可以向指定位置插入任意数量的项，且同时删除任意数量的项，只需指定 3 个参数：起始位置、要删除的项数和要插入的任意数量的项。插入的项数不必与删除的项数相等。     
+```javascript
+let colors = ["red", "green", "blue", "white", "black", "pink", "brown"];
+
+// 删除
+console.log(colors.splice(0, 2)); // ["red", "green"]
+console.log(colors); // ["blue", "white", "black", "pink", "brown"]
+
+// 插入
+colors.splice(0, 0, "red", "green"); // 从第 0 个位置开始插入两项  返回一个空数组，因为没有被删除的
+console.log(colors); // ["red", "green", "blue", "white", "black", "pink", "brown"]
+
+// 替换
+colors.splice(2, 1, "white"); // 将下标为 2 的元素替换为 white
+console.log(color); // ["red", "green", "white", "white", "black", "pink", "brown"]`
+```
+
+<hr />
+
+**4. indexOf() 和 5. lastIndexOf()**
+
+作用：用于查找某一个值是否在数组中存在，`indexOf()` 从前向后查找，`lastIndexOf()` 从后向前查找，如果找到就返回对应项的下标，没有找到就返回 -1。   
+**注意：两个方法都是只找到第一个存在的值以后就停止，不在向前（或向后）查找。**   
+```javascript
+const numbers = [1,2,3,4,5,4,3,2,1];
+
+console.log(numbers.indexOf(4)); // 3 没有找第二个 4 ，找到第一个就停止
+console.log(numbers.lastIndexOf(4)); // 5
+``` 
+上面只是列举了基本类型作为距离，但是当数组中包括引用类型的时候，结果可能会出人意料：
+```javascript
+const users = [
+  { id: 0, age:21, name: "Hans" },
+  { id: 1, age:26, name: "Anna" },
+  { id: 2, age:32, name: "Baggins" }
+]
+
+const user = { id: 0, age:21, name: "Hans" };
+
+console.log(users.indexOf(user));  // -1
+```
+这里为什么是 -1 呢，其实在前面的章节里已经有说过了，那么因为 `indexOf()` 和 `lastIndexOf()` 使用的是全等( === )，然而引用类型实际上比较的是存储在栈内存中的地址，虽然说两个对象的内容一样，但是这两个对象在堆内存中的地址不一样，
+所以存储在栈内存中的值也就是二者的地址是不一样的，所以不会找到对应的项，再多说一句，虽然我们看起来他们的内容一样，但是在解释器眼里是看不到他们一样的。   
+
+<hr />
+
+**迭代方法**
+
+JS 中数组的迭代方法有：`every()`, `filter()`, `some()`, `map()`, `forEach()`，这些方法都接收两个参数，第一个是运行在每一项上的一个函数，第二个(可选)是该函数运行时的 this 的指向，
+传入的函数可接收三个参数：当前项，当前项的下标和数组本身：
+
+- every()：对数组中的每一项运行给定函数，如果该函数对每一项都返回 true，则返回 true。 
+- filter()：对数组中的每一项运行给定函数，返回该函数会返回 true 的项组成的数组。
+- forEach()：对数组中的每一项运行给定函数。这个方法没有返回值。
+- map()：对数组中的每一项运行给定函数，返回每次函数调用的结果组成的数组。
+- some()：对数组中的每一项运行给定函数，如果该函数对任一项返回 true，则返回 true。
+
+<hr />
+
+**归并方法 reduce() 和 reduceRight()**
+
+`reduce()` 和 `reduceRight()` 很相似，只不过一个从左开始遍历数组，一个从右遍历数组，下面都以 `reduce()` 来举例。    
+方法接收两个参数：一个在每一项上调用的函数和（可选的）作为归并基础的初始值。    
+传给 `reduce()` 的函数接收 4 个参数：前一个值、当前值、项的下标和数组本身。这个传入函数的返回值会作为第一个参数自动传给下一项：
+```javascript
+// 利用 reduce 来实现数组求和
+const values = [1, 2, 3, 4, 5];
+const sum = values.reduce((prev, cur, index, self) => {
+  return prev + cur;
+}, 0)
+console.log(sum); // 15
+```
+后面传入的那个 0(初始值) 是作为第一次调用传入函数时的第一个参数的值。 如果没有提供初始值，则将使用数组中的第一个元素。 在没有初始值的空数组上调用 reduce 将报错。   
+
+
+ 
+
