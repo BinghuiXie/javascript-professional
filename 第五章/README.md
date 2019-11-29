@@ -257,8 +257,236 @@ const sum = values.reduce((prev, cur, index, self) => {
 }, 0)
 console.log(sum); // 15
 ```
-后面传入的那个 0(初始值) 是作为第一次调用传入函数时的第一个参数的值。 如果没有提供初始值，则将使用数组中的第一个元素。 在没有初始值的空数组上调用 reduce 将报错。   
+后面传入的那个 0(初始值) 是作为第一次调用传入函数时的第一个参数的值。 如果没有提供初始值，则将使用数组中的第一个元素。 在没有初始值的空数组上调用 reduce 将报错。  
 
+### RegExp 类型
 
- 
+**创建一个正则表达式**
 
+ 一种方式是字面量模式创建正则表达式：
+```javascript
+const reg = / pattern / flags ;
+```
+pattern 部分可以使任何正则表达式，flags 包含以下三个标志：
+- g： 全局搜索
+- i：不区分大小写
+- m：多行匹配
+
+```javascript
+const pattern1 = /[bc]at/i
+```
+
+另一种创建正则表达式的方法是通过 `RegExp` 构造函数，它接收两个参数：一个是要匹配的字符串模式，另一个是可选的标志字符串(i,g,m):
+```javascript
+const pattern2 = new RegExp("[bc]at", "i");
+```
+需要注意的是，`RegExp`构造函数内传入的两个参数都是字符串，所以对于一些元字符需要进行双重转义，例如，字符\在字符串中通常被转义为\\\\，而在正则表达式字符串中就会变成\\\\\\\\。   
+
+### Function 类型
+
+JS中常用创建函数有两种形式：函数声明，函数表达式。   
+
+**函数声明**
+
+```javascript
+function sum(num1, num2) {
+  return num1 + num2;
+}
+```
+
+**函数表达式**
+
+```javascript
+const sum = function(num1, num2) {
+  return num1 + num2;
+};
+```
+
+上面两种形式中，因为函数是对象，所以其函数名 sum 其实保存的是一个指针，或者是一个引用，其值是这个函数对象在堆内存中的地址，这就像之前写到的变量保存 object 只是保存了其在堆内存中的地址而已，保存的不是实际的对象，所以，这就允许我们进行如下操作：
+```javascript
+let sum = function(num1, num2) {
+  return num1 + num2;
+};
+console.log(sum(10, 20)); // 30
+
+const anotherSum = sum;
+console.log(anotherSum(10, 20)); // 30
+
+sum = null;
+console.log(anotherSum(10, 20)); // 30
+```
+**有一点需要注意一下，直接使用不带圆括号的函数名只是访问函数指针，而不是调用函数**   
+JS 中的函数式没有重载的，同名函数只会是后面定义的覆盖前面的，而且因为 JS 中函数的参数本来也不是必须的，就算没有形式参数，调用函数时传入的实参也会在 arguments 对象里面找到，所以说不存在重载这一概念：
+```javascript
+function reload() {
+  const argus = [...arguments];
+  console.log(argus);
+}
+// 这样也是可以传入参数的，只不过在函数内部职能通过 arguments 对象访问到传入参数而已
+console.log(reload(1,2,3,4,5)); // [1, 2, 3, 4, 5]
+```
+
+**函数声明与函数表达式的区别**
+
+函数声明与函数表达式只有一个很简单的区别：函数声明会存在函数声明提升而函数表达式不存在，看一个例子：
+```javascript
+// 函数声明
+console.log(sum1(10, 20));  // 30
+function sum1(num1, num2) {
+  console.log(num1 + num2);
+}
+
+// 函数表达式
+console.log(sum2(10, 20));   // Uncaught ReferenceError: Cannot access 'sum2' before initialization
+const sum2 = function(num1, num2) {
+  console.log(num1 + num2);
+}
+```
+根据上面的例子，函数声明在代码执行前就可以访问了，然而函数表达式在其执行前访问会报错，这是因为对于函数声明，在代码开始执行之前，解析器就已经通过一个名为**函数声明提升**的过程，
+读取并将函数声明添加到执行环境中。对代码求值时，JavaScript 引擎在第一遍会声明函数并将它们放到源代码树的顶部。所以，即使声明函数的代码在调用它的代码后面，JavaScript 引擎也能把函数声明提升到顶部。
+而对于函数表达式则不存在函数提升，所以在代码执行之前访问对应函数会报错。
+
+<hr />
+
+**函数内部的属性**
+
+1. `arguments.callee`
+2. `this`
+
+arguments 对象是函数内部一个接受传入参数的类数组对象，其含有一个 `callee` 属性，这个属性包含当前正在执行的函数，它可以在函数内部被用来访问当前正在执行的函数，通常来说，当函数是匿名函数的时候，`arguments.callee` 会
+很有用，尤其是在匿名函数完成的是一个阶乘的计算的时候：
+```javascript
+// 对于非匿名函数，可以这么写
+function factorial (n) {
+    return !(n > 1) ? 1 : factorial(n - 1) * n;
+}
+
+[1, 2, 3, 4, 5].map(factorial);
+
+// 对于匿名函数，可以这么写
+// 此时 arguments.callee 指向的就是当前传入 map 的这个函数
+[1, 2, 3, 4, 4].map(function() {
+  return !(n > 1) ? 1 : arguments.callee(n - 1) * n;
+})
+```
+
+this 对象相对来说比较复杂，可以参考这一篇文章：
+[ECMA-262-3 in detail. Chapter 3. This.](http://dmitrysoshnikov.com/ecmascript/chapter-3-this/)      
+
+<hr />
+
+**函数的属性和方法**
+
+**常用函数的属性**
+
+1. length
+2. prototype
+
+length 属性返回函数形参的个数：
+```javascript
+function foo(a,b,c,d){
+  console.log(arguments.callee.length) 
+}
+foo();              // 4
+foo(1,2,3,4,5,6);   // 4
+```
+可以看出，函数的 length 属性与实际传入参数的个数无关，其长度是形式参数的个数。
+
+prototype 属性是每一个函数都有的属性，当函数作为构造函数时，通过这个函数创建的实例会将这个构造函数原型 (也就是 prototype ) 上的属性和方法都继承下来：
+```javascript
+function Person(age) {
+  this.age = age;
+}
+Person.prototype.getAge = function() {
+  return this.age;
+}
+
+const personA = new Person(12);
+console.log(personA.getAge());  // 12
+console.log(personA.age);       // 12
+const personB = new Person(26);
+console.log(personB.getAge());  // 26
+console.log(personB.age);       // 26
+```
+关于更详细的原型，以及原型链的东西，可参考：    
+[JavaScript学习心得](http://binghuixie.cn/2019/02/21/JavaScript%E5%AD%A6%E4%B9%A0%E5%BF%83%E5%BE%97/)      
+
+**改变 this 指向的方法： call(), apply() bind()**    
+
+三者都是挂载在 Function 原型上的( 例如：Function.prototype.call() )，当然也可以通过 Function 的实例访问到这三个函数。   
+三个函数的作用都是改变函数内部 this 的指向，也就是说在特定的作用域中调用函数，三者只有很小的区别：
+- `call()`: 第一个参数为需要绑定的 this 的值(函数运行的作用域)，剩余的参数个数任意，是需要传给所调用函数的参数
+- `bind()`: 第一个参数为需要绑定的 this 的值(函数运行的作用域)，第二个参数为一个数组，可以是 Array 的实例，也可以是 arguments 对象
+- `apply()`: 第一个参数为需要绑定的 this 的值(函数运行的作用域)，剩余的参数与 call() 一样，但不同的是它会返回一个改变了 this 绑定以后的函数
+
+先来看一个最基础的使用的例子：
+```javascript
+var num1 = 15, num2 = 25;
+function sum() {
+  console.log(this.num1 + this.num2);
+}
+const numObj = {
+  num1: 50,
+  num2: 60
+}
+
+sum();                  // 40
+sum.call(numObj);       // 110
+```
+注意到这里面我用了 var 定义变量而不是 let 或者 const，这是因为 const 和 let 定义的变量不会作为 window 对象的属性，而 var 定义的变量会作为 window 对象的属性，也就是说可以通过 `window.varname` 访问到，因为在全局调用
+`sum()` 的时候 this 就是 window， 所以能返回 40，如果使用 let 或者 const 定义，那么就会返回 NaN。     
+传参的例子：
+```javascript
+function sum(num1, num2){ 
+ return num1 + num2; 
+} 
+function callSum1(num1, num2){ 
+ return sum.call(this, num1, num2);
+} 
+function callSum2(num1, num2){ 
+ return sum.apply(this, [num1, num2]);
+} 
+alert(callSum1(10,10)); //20 
+alert(callSum2(10,10)); //20
+```
+bind 方法就不举例了，除了返回一个新的函数，这个函数的 this 指向的是传入 bind 的那个 this 的指向，其他的都和 call 一样。React 里面 bind 用的比较多。   
+三个方法最常用的就是扩展函数的运行作用域：
+```javascript
+window.color = "red"; 
+const o = { color: "blue" }; 
+function sayColor(){ 
+ alert(this.color); 
+} 
+sayColor();             //red   全局作用域调用
+sayColor.call(this);    //red   全局作用域调用 
+sayColor.call(window);  //red   全局作用域调用
+sayColor.call(o);       //blue   o 对象作用域调用
+```
+
+<hr />
+
+**基本包装类型**
+
+基本包装类型的作用在于为基本类型包装对应的对象，这样就可以在这些基础类型上调用一些方法了：
+```javascript
+const str = "some text";
+const str2 = str.toUpperCase();
+```
+上例中，如果 str 只是一个单纯的字符串的话，是没有可能通过这个字符串调用方法的，实际上，在代码执行到第二行的时候，后台会自动完成以下几步过程：
+- 创建一个 String 类型的实例
+- 在实例上调用制定的方法
+- 销毁这个实例
+
+所以上面的例子可以想象成是按照这样来执行的:
+```javascript
+let s1 = new String("some text"); 
+const s2 = s1.substring(2); 
+s1 = null;
+```
+这样，字符串就变得和对象一样了。这样的自动包装也同样适用于 `Boolean` 和 `Number`。    
+虽然和对象一样，但是却不能为这个字符串添加属性或者方法：
+```javascript
+s1.color = "red";
+console.log(s1.color); // undefined
+```
+这是因为第二行创建了基本包装的实例以后，执行完这一行代码就会立即销毁这个实例，在第三行的时候又会创建一个新的实例，这个新的实例没有 color 属性，所以是 undefined。   
